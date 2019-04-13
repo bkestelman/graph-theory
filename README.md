@@ -1,8 +1,10 @@
-# Setup
+# graph-theory
 
 graph-theory offers an easy way to draw graphs (the ones with vertices and edges, not functions). Users can connect to a graph-theory server through their browser and see the graph made by all other users connected to the same server. 
 
 A demo graph-theory server is running (hopefully!) at http://192.81.214.140
+
+## Setup
 
 There are two ways you can run your own graph-theory server:
 1. Use your own web server 
