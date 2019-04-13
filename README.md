@@ -4,6 +4,8 @@ graph-theory offers an easy way to draw graphs (the ones with vertices and edges
 
 A demo graph-theory server is running (hopefully!) at http://192.81.214.140
 
+Feel free to open issues for bug reports or feature requests!
+
 ## Setup
 
 There are two ways you can run your own graph-theory server:
