@@ -13,7 +13,7 @@
 	</div>
 	<p id="cors"></p>
 	<p id="inpath"></p>
-	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+	<script src="${SERVER_IP}:${SERVER_PORT}/socket.io/socket.io.js"></script>
 	<script>
 		var canvas = document.getElementById('canvas')
 		var ctx = canvas.getContext('2d')
@@ -164,7 +164,7 @@
 		}
 
 		// Socket stuff
-		var socket = io('http://localhost:3000')
+		var socket = io('${SERVER_IP}:${SERVER_PORT}')
 		socket.on('update', function(g) {
 			console.log(g)
 			graph.addGraph(g)
