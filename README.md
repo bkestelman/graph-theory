@@ -1,12 +1,16 @@
 # Setup
 
-Two options for serving the site:
+graph-theory offers an easy way to draw graphs (the ones with vertices and edges, not functions). Users can connect to a graph-theory server through their browser and see the graph made by all other users connected to the same server. 
+
+A demo graph-theory server is running (hopefully!) at http://192.81.214.140
+
+There are two ways you can run your own graph-theory server:
 1. Use your own web server 
 2. Use a Docker image
 
-More details:
+Read on for more details:
 
-Option 1: Using your own web server
+## Option 1: Using your own web server
 
 We assume you have Nginx installed with default configuration and site root /var/www/html. If your setup is different, adjust the following commands accordingly.
 
@@ -17,6 +21,7 @@ git clone https://github.com/bkestelman/graph-theory
 ```
 
 2. Configure a new site
+
 a. Make a copy of /etc/nginx/sites-available/default for the graph-theory site 
 ```
 cp /etc/nginx/sites-available/{default,graph-theory}
@@ -40,14 +45,21 @@ The file `html/template.html` has contains the shell variables `${SERVER_IP}` an
 Go to your server's public ip (or localhost if you're running locally) to see the site.
 
 4. Start the node.js server
+
 The static site is up, but there's no communication between users yet. 
+
 a. Install npm dependencies
+```
 ( cd sock-server; npm install )
+```
 b. Start the node server
+```
 node sock-server/server.js &
+```
 
 Now, open the site in multiple tabs or windows and check that drawing on one updates the others. Try with your friends!
 
-Option 2: Using Docker 
+## Option 2: Using Docker 
 
 :construction: under construction... :construction:
+
