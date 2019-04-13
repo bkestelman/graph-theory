@@ -1,0 +1,177 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		canvas { 
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<canvas id="canvas" width="1000" height="600">Error creating canvas</canvas>
+	</div>
+	<p id="cors"></p>
+	<p id="inpath"></p>
+	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+	<script>
+		var canvas = document.getElementById('canvas')
+		var ctx = canvas.getContext('2d')
+		const VRAD = 15
+		const drawers = { ME: 0, OTHER: 1 }
+		var lastDrawnV
+		var graph = new Graph() 
+		canvas.addEventListener('click', function(event) {
+			var x = event.offsetX
+			var y = event.offsetY
+			console.log('click ' + x + ',' + y)
+			graph.addV(x, y)
+			broadcast(graph)
+		})
+
+		var cors = document.getElementById('cors')
+
+		function draw() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height)
+			graph.draw(ctx)
+			window.requestAnimationFrame(draw)
+		}
+		window.requestAnimationFrame(draw)
+
+		var mousex, mousey
+		canvas.addEventListener('mousemove', function(event) {
+			mousex = event.offsetX
+			mousey = event.offsetY
+			cors.innerHTML = 'x: ' + mousex + ', y: ' + mousey 
+		})
+
+		function Vertex(x, y) {
+			this.x = x
+			this.y = y
+			this.toPath2D = function() {
+				var path = new Path2D()
+				path.arc(x, y, VRAD, 0, Math.PI*2)
+				return path
+			}
+			this.path = this.toPath2D()
+			this.contains = function(x, y) {
+				if (ctx.isPointInPath(this.path, x, y)) {
+					return true
+				}
+				return false
+			}
+		}
+		function Edge(v0, v1) {
+			this.v0 = v0
+			this.v1 = v1
+			this.toPath2D = function() {
+				var path = new Path2D()
+				path.moveTo(v0.x, v0.y)
+				path.lineTo(v1.x, v1.y)
+				return path
+			}
+			this.path = this.toPath2D()
+		}
+		function Graph(graph) {
+			this.vertices = []
+			this.edges = []
+			this.addV = function(x, y, drawer = drawers.ME) {
+				// if x, y match an old vertex (i.e. previously drawn) 
+				var oldv = this.contains(x, y)
+				if (oldv) {
+					if (drawer == drawers.OTHER) { // if another user drew this vertex 
+						return // do nothing 
+					}
+					// if we're already drawing, close the graph (i.e. lift the pen)
+					if (lastDrawnV) { 
+						this.addE(lastDrawnV, oldv)
+						lastDrawnV = undefined
+					}
+					// if we're starting a new subgraph from an old vertex 
+					else {
+						lastDrawnV = oldv
+					}
+					return
+				}
+				// if x, y don't match an old vertex (i.e. need to draw a new one)
+				if (drawer == drawers.OTHER) { // if another user drew this vertex
+					this.vertices.push(new Vertex(x, y)) // push it 
+					return // don't need to do anything else
+				}
+				// if we drew it, need to create an edge to go with it
+				oldv = lastDrawnV 
+				newv = new Vertex(x, y)
+				this.vertices.push(newv)
+				if (lastDrawnV) { 
+					this.addE(oldv, newv)
+				}
+				lastDrawnV = newv
+			}
+			this.addE = function(v0, v1) {
+				if (!this.containsE (v0, v1)) {
+					this.edges.push(new Edge(v0, v1)) 
+				}
+			}
+			this.toPath2D = function() {
+				var path = new Path2D()
+				for (var v of this.vertices) {
+					path.addPath(v.path)
+				}
+				for (var e of this.edges) {
+					path.addPath(e.path)
+				}
+				return path
+			}
+			this.draw = function(ctx) {
+				for (var v of this.vertices) {
+					if (v.contains(mousex, mousey)) {
+						ctx.strokeStyle = 'cyan'
+					} else {
+						ctx.strokeStyle = 'black'
+					}
+					ctx.stroke(v.path)
+				}
+				for (var e of this.edges) {
+					ctx.strokeStyle = 'black'
+					ctx.stroke(e.path) 
+				}
+			}
+			this.contains = function(x, y) {
+				for (var v of this.vertices) {
+					if (v.contains(x, y)) {
+						return v 
+					} 
+				}
+				return false
+			}
+			this.containsE = function(v0, v1) {
+				for (var e of this.edges) {
+					if (v0.x == e.v0.x && v1.x == e.v1.x && v0.y == e.v0.y && v1.y == e.v1.y) return true
+				}
+				return false
+			}
+			this.addGraph = function(graph) {
+				for (var v of graph.vertices) {
+					this.addV(v.x, v.y, true)
+				}
+				for (var e of graph.edges) {
+					this.addE(e.v0, e.v1)
+				}
+			}
+			if (graph) {
+				this.addGraph(graph)	
+			}
+		}
+
+		// Socket stuff
+		var socket = io('http://localhost:3000')
+		socket.on('update', function(g) {
+			console.log(g)
+			graph.addGraph(g)
+		})
+		function broadcast(graph) {
+			socket.emit('update', graph)
+		}
+	</script>
+</body>
+</html>
