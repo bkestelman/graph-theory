@@ -1,0 +1,10 @@
+**
+!Dockerfile
+!startup.sh
+!setup.sh
+
+!html/template.html
+!nginx/default.conf
+
+!sock-server/package.json
+!sock-server/server.js

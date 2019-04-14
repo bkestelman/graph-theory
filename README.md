@@ -9,14 +9,25 @@ Feel free to open issues for bug reports or feature requests!
 ## Setup
 
 There are two ways you can run your own graph-theory server:
-1. Use your own web server 
-2. Use a Docker image
+1. Use Docker (recommended)
+2. Use your own web server 
 
 Read on for more details:
 
-## Option 1: Using your own web server
+## Option 1: Use Docker
 
-We assume you have Nginx installed with default configuration and site root /var/www/html. If your setup is different, adjust the following commands accordingly.
+We assume you have Docker installed.
+```
+git clone https://github.com/bkestelman/graph-theory
+cd graph-theory
+docker build . -f Dockerfile -t graph-theory
+docker run -it --net=host graph-theory
+```
+Go to your server's public ip in your browser (or localhost if running locally) and start drawing. If using a public ip, your friends can join in too!
+
+## Option 2: Use your own web server
+
+We assume you have Nginx installed on Ubuntu with default configuration and site root /var/www/html. If your setup is different, adjust the commands accordingly.
 
 1. Clone the graph-theory repo
 ```
@@ -44,13 +55,13 @@ ln -s /etc/nginx/sites-{available,enabled}/graph-theory
 cd /var/www/graph-theory
 bash setup.sh
 ```
-The file `html/template.html` has contains the shell variables `${SERVER_IP}` and `${SERVER_PORT}`. These are meaningless in html, but the setup.sh script will replace them with your server's ip address and the (currently hard-coded to 3000) port where the node.js server will run. 
+The file `html/template.html` references `${SERVER_IP}` and `${SERVER_PORT}`. These are meaningless in html, but the setup.sh script replaces them with your server's ip address and the port where the node.js server will run (currently hard coded to 3000). 
 
 Go to your server's public ip (or localhost if you're running locally) to see the site.
 
-4. Start the node.js server
-
 The static site is up, but there's no communication between users yet. 
+
+4. Start the node.js server
 
 a. Install npm dependencies
 ```
@@ -62,8 +73,3 @@ node sock-server/server.js &
 ```
 
 Now, open the site in multiple tabs or windows and check that drawing on one updates the others. Try with your friends!
-
-## Option 2: Using Docker 
-
-:construction: under construction... :construction:
-
