@@ -1,6 +1,6 @@
 # graph-theory
 
-graph-theory offers an easy way to draw graphs (the ones with vertices and edges, not functions). Users can connect to a graph-theory server through their browser and see the graph made by all other users connected to the same server. 
+graph-theory is an easy way to draw graphs (the ones with vertices and edges, not functions). Users can connect to a graph-theory server through their browser and see the graph made by all other users connected to the same server. 
 
 A demo graph-theory server is running (hopefully!) at http://192.81.214.140
 
@@ -21,11 +21,13 @@ We assume you have Docker installed.
 git clone https://github.com/bkestelman/graph-theory
 cd graph-theory
 docker build . -f Dockerfile -t graph-theory
-docker run -it --net=host graph-theory
+bash docker_run.sh
 ```
 Go to your server's public ip in your browser (or localhost if running locally) and start drawing. If using a public ip, your friends can join in too!
 
-## Option 2: Use your own web server
+## Option 2: Use your own web server 
+
+:warning: These instructions are outdated
 
 We assume you have Nginx installed on Ubuntu with default configuration and site root /var/www/html. If your setup is different, adjust the commands accordingly.
 

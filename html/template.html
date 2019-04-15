@@ -13,21 +13,25 @@
 	</div>
 	<p id="cors"></p>
 	<p id="inpath"></p>
-	<script src="${SERVER_IP}:${SERVER_PORT}/socket.io/socket.io.js"></script>
+	<script src="${HOST_IP}:${NODEJS_PORT}/socket.io/socket.io.js"></script>
 	<script>
 		var canvas = document.getElementById('canvas')
 		var ctx = canvas.getContext('2d')
 		const VRAD = 15
 		const drawers = { ME: 0, OTHER: 1 }
+		const clicks = { LEFT: 0, MIDDLE: 1, RIGHT: 3, BROWSER_BACK: 4, BROWSER_FORWARD: 5 } // defined at https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button#Return_value
 		var lastDrawnV
 		var graph = new Graph() 
 		canvas.addEventListener('click', function(event) {
 			var x = event.offsetX
 			var y = event.offsetY
-			console.log('click ' + x + ',' + y)
 			graph.addV(x, y)
 			broadcast(graph)
 		})
+		canvas.addEventListener('contextmenu', function(event) {
+			event.preventDefault()
+			return false
+		}, false)
 
 		var cors = document.getElementById('cors')
 
@@ -164,7 +168,7 @@
 		}
 
 		// Socket stuff
-		var socket = io('${SERVER_IP}:${SERVER_PORT}')
+		var socket = io('${HOST_IP}:${NODEJS_PORT}')
 		socket.on('update', function(g) {
 			console.log(g)
 			graph.addGraph(g)

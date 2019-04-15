@@ -1,6 +1,6 @@
 **
 !Dockerfile
-!startup.sh
+!entrypoint.sh
 !setup.sh
 
 !html/template.html
