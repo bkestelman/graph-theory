@@ -124,6 +124,9 @@
 			this.delV = function(x, y) {
 				var v = this.contains(x, y) // find the clicked vertex
 				if (v) {
+					if (v === lastDrawnV) {
+						lastDrawnV = undefined
+					}
 					console.log('In vertex ')
 					console.log(v)
 					this.vertices.splice(this.vertices.indexOf(v), 1)
