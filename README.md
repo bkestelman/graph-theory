@@ -23,6 +23,9 @@ cd graph-theory
 docker build . -f Dockerfile -t graph-theory
 bash docker_run.sh
 ```
+docker pull bkestelman/graph-theory
+docker run -it -p 80:80 -p 3000:3000 --env HOST_IP=localhost --env HTTP_PORT=80 --env NODEJS_PORT=3000 bkestelman/graph-theory
+```
 Go to your server's public ip in your browser (or localhost if running locally) and start drawing. If using a public ip, your friends can join in too!
 
 ## Option 2: Use your own web server 
