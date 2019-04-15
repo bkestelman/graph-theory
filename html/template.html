@@ -25,11 +25,16 @@
 		canvas.addEventListener('click', function(event) {
 			var x = event.offsetX
 			var y = event.offsetY
+			// TODO: test on different browsers, seems like this eventlistener only hears left clicks
 			graph.addV(x, y)
 			broadcast(graph)
 		})
 		canvas.addEventListener('contextmenu', function(event) {
+			var x = event.offsetX
+			var y = event.offsetY
 			event.preventDefault()
+			console.log("Right click detected")
+			graph.delV(x, y)
 			return false
 		}, false)
 
@@ -115,6 +120,27 @@
 				if (!this.containsE (v0, v1)) {
 					this.edges.push(new Edge(v0, v1)) 
 				}
+			}
+			this.delV = function(x, y) {
+				var v = this.contains(x, y) // find the clicked vertex
+				if (v) {
+					console.log('In vertex ')
+					console.log(v)
+					this.vertices.splice(this.vertices.indexOf(v), 1)
+					console.log('removing')
+					for (var i = this.edges.length-1; i >= 0; i--) {
+						var e = this.edges[i]
+						console.log(e)
+						if ((e.v0.x == v.x && e.v0.y == v.y) || (e.v1.x == v.x && e.v1.y == v.y)) {
+							console.log('deleting e')
+							this.delE (e)
+						}
+					}
+				}
+				// TODO: what if we delete lastDrawn?
+			}
+			this.delE = function(e) {
+				this.edges.splice(this.edges.indexOf(e), 1) 
 			}
 			this.toPath2D = function() {
 				var path = new Path2D()
