@@ -1,0 +1,31 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		canvas { 
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<canvas id="canvas" width="1000" height="600">Error creating canvas</canvas>
+	</div>
+	<p id="cors"></p>
+	<p id="inpath"></p>
+	<script src="${HOST_IP}:${NODEJS_PORT}/socket.io/socket.io.js"></script>
+	<script src="scripts/simplegraph.js"></script>
+	<script src="scripts/canvasgraph.js"></script>
+	<script>
+		// Socket stuff
+		var socket = io('${HOST_IP}:${NODEJS_PORT}')
+		socket.on('update', function(updates) {
+			console.log(updates)
+			graph.addGraph(updates)
+		})
+		function broadcast(updates) {
+			socket.emit('update', updates)
+		}
+	</script>
+</body>
+</html>

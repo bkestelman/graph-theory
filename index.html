@@ -1,0 +1,54 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<style type="text/css">
+		canvas { 
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<canvas id="canvas" width="1000" height="600">Error creating canvas</canvas>
+	</div>
+	<script src="192.81.214.140:5000/socket.io/socket.io.js"></script>
+	<script src="scripts/simplegraph.js"></script>
+	<script src="scripts/canvasgraph.js"></script>
+	<script>
+	var CG = CanvasGraph
+	var graph = new CG.CanvasGraph()
+	var graph2 = new CG.CanvasGraph()
+	var canvas = document.getElementById('canvas')
+	var ctx = canvas.getContext('2d')
+
+	canvas.addEventListener('click', function(event) {
+		console.log('click')
+		var x = event.offsetX
+		var y = event.offsetY 
+		var clickedV = graph.getV(x, y) 
+		if (clickedV) { // if we clicked an existing Vertex
+			graph.close(clickedV) // "close" the graph by adding Edge to the clicked Vertex
+			return
+		}
+		graph.addV(new CG.CanvasVertex(x, y)) // otherwise add a new Vertex
+		//redraw()
+	})
+	canvas.addEventListener('contextmenu', function(event) { // right click
+		event.preventDefault() // don't open menu
+		console.log('right click')
+		var x = event.offsetX
+		var y = event.offsetY 
+		graph.delV(graph.getV(x, y))
+		//redraw()
+		return false
+	})
+
+	function redraw() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height)
+		graph.draw()
+		window.requestAnimationFrame(redraw) // really, we should only call this when themy.graph is changed (on click or on update)
+	}
+	window.requestAnimationFrame(redraw) 
+
+	</script>
+</body>

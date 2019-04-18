@@ -27,7 +27,7 @@
 			var y = event.offsetY
 			// TODO: test on different browsers, seems like this eventlistener only hears left clicks
 			graph.addV(x, y)
-			broadcast(graph)
+			//broadcast(graph)
 		})
 		canvas.addEventListener('contextmenu', function(event) {
 			var x = event.offsetX
@@ -35,6 +35,7 @@
 			event.preventDefault()
 			console.log("Right click detected")
 			graph.delV(x, y)
+			broadcast(graph)
 			return false
 		}, false)
 
@@ -88,12 +89,15 @@
 				// if x, y match an old vertex (i.e. previously drawn) 
 				var oldv = this.contains(x, y)
 				if (oldv) {
+					console.log('clicked an old v')
 					if (drawer == drawers.OTHER) { // if another user drew this vertex 
 						return // do nothing 
 					}
 					// if we're already drawing, close the graph (i.e. lift the pen)
 					if (lastDrawnV) { 
-						this.addE(lastDrawnV, oldv)
+						var e = this.addE(lastDrawnV, oldv)
+						var updates = { op: "add", vertices: [], edges: [e] }
+						broadcast(updates)
 						lastDrawnV = undefined
 					}
 					// if we're starting a new subgraph from an old vertex 
@@ -107,18 +111,23 @@
 					this.vertices.push(new Vertex(x, y)) // push it 
 					return // don't need to do anything else
 				}
-				// if we drew it, need to create an edge to go with it
+				// if we drew it, may need to create an edge to go with it, and publish to other users
 				oldv = lastDrawnV 
 				newv = new Vertex(x, y)
 				this.vertices.push(newv)
+				var updates = { op: "add", vertices: [newv], edges: [] }
 				if (lastDrawnV) { 
-					this.addE(oldv, newv)
+					var newe = this.addE(oldv, newv)
+					updates.edges.push(newe)
 				}
+				broadcast(updates)
 				lastDrawnV = newv
 			}
 			this.addE = function(v0, v1) {
 				if (!this.containsE (v0, v1)) {
-					this.edges.push(new Edge(v0, v1)) 
+					var e = new Edge(v0, v1)
+					this.edges.push(e) 
+					return e
 				}
 			}
 			this.delV = function(x, y) {
@@ -140,7 +149,6 @@
 						}
 					}
 				}
-				// TODO: what if we delete lastDrawn?
 			}
 			this.delE = function(e) {
 				this.edges.splice(this.edges.indexOf(e), 1) 
@@ -198,12 +206,12 @@
 
 		// Socket stuff
 		var socket = io('${HOST_IP}:${NODEJS_PORT}')
-		socket.on('update', function(g) {
-			console.log(g)
-			graph.addGraph(g)
+		socket.on('update', function(updates) {
+			console.log(updates)
+			graph.addGraph(updates)
 		})
-		function broadcast(graph) {
-			socket.emit('update', graph)
+		function broadcast(updates) {
+			socket.emit('update', updates)
 		}
 	</script>
 </body>

@@ -3,16 +3,15 @@ var port = process.env.NODEJS_PORT || 3000
 var io = require('socket.io')(port)
 console.log('listening on port ' + port)
 
-var lastgraph
+var fullgraph 
 
 io.on('connection', function(socket) {
 	console.log('New connection!')
-	socket.on('update', function(graph) { 
-		socket.broadcast.emit('update', graph)
-		lastgraph = graph // will data get lost if multiple users update the graph at the same time?
+	socket.on('update', function(updates) { 
+		socket.broadcast.emit('update', updates)
 	})
 
-	if (lastgraph) {
-		socket.emit('update', lastgraph)
+	if (fullgraph) {
+		socket.emit('update', fullgraph)
 	}
 })
