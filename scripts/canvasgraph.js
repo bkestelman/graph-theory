@@ -2,7 +2,8 @@
  * my.CanvasGraph
  * Augments SimpleGraph with functionality for drawing on an HTML my.Canvas
  */
-var CanvasGraph = (function(Graph) {
+//var SimpleGraph = require('SimpleGraph').SimpleGraph
+var CanvasGraph = function(Graph) {
 	var my = {}, vrad = 12
 	my.CanvasVertex = function(x, y) {
 		this.x = x
@@ -27,29 +28,40 @@ var CanvasGraph = (function(Graph) {
 		var base = new Graph.Graph(g)
 		this.vertices = base.vertices
 		this.edges = base.edges
-		var lastDrawn
-		this.addV = function(v) {
+		this.drawer = new my.Drawer()
+		this.addV = function(v, drawer=this.drawer) {
+			console.log('adding v')
 			Graph.Graph.prototype.addV.call(this, v) 
-			if (lastDrawn) { // if we're drawing, add Edge
-				Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ lastDrawn, v ]) )
+			if (drawer.lastDrawn) { // if we're drawing, add Edge
+				Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) )
 			}
-			lastDrawn = v
+			drawer.lastDrawn = v
+			return v
 		}
 		this.delV = function(v) {
 			if (!v) return
-			if (v === lastDrawn) {
-				lastDrawn = undefined
+			if (v === this.drawer.lastDrawn) { 
+				this.drawer.lastDrawn = undefined
 			}
 			Graph.Graph.prototype.delV.call(this, v)
 		}
-		this.close = function(v) { // "close" a graph 
-			Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ lastDrawn, v ]) ) // add Edge
-			lastDrawn = undefined
+		this.close = function(v, drawer=this.drawer) { // "close" a graph 
+			console.log('closing')
+			if (v === drawer.lastDrawn) return
+			Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) ) 
+			drawer.lastDrawn = undefined
 		}
 		this.draw = function() {
 			for (var v of this.vertices) {
+				if (v.contains(mousex, mousey)) {
+					ctx.strokeStyle = 'cyan'
+				}
+				else {
+					ctx.strokeStyle = 'black'
+				}
 				ctx.stroke(v.path)
 			}
+			ctx.strokeStyle = 'black'
 			for (var e of this.edges) {
 				ctx.stroke(e.path)
 			}
@@ -63,6 +75,12 @@ var CanvasGraph = (function(Graph) {
 		}
 	}
 	my.CanvasGraph.prototype = new Graph.Graph()
+	my.Drawer = function(name) { // to keep track of multiple users drawing on one Graph
+		this.lastDrawn
+	}
 
 	return my
-}(SimpleGraph))
+}
+
+module.exports.CanvasGraph = CanvasGraph
+//export {CanvasGraph}

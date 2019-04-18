@@ -41,3 +41,6 @@ var SimpleGraph = (function() {
 
 	return my
 }())
+
+module.exports.SimpleGraph = SimpleGraph
+//export {SimpleGraph}
