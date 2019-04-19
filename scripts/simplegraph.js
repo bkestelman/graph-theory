@@ -7,7 +7,7 @@
 /** 
  * SimpleGraph Module
  */
-var SimpleGraph = (function() {
+var SimpleGraph = function() {
 	var my = {}
 
 	my.Vertex = function() {
@@ -40,7 +40,7 @@ var SimpleGraph = (function() {
 	my.Graph.prototype.delE = function(e) { this.edges.delete(e) }
 
 	return my
-}())
+}
 
 module.exports.SimpleGraph = SimpleGraph
 //export {SimpleGraph}

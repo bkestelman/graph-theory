@@ -3,25 +3,34 @@
  * Augments SimpleGraph with functionality for drawing on an HTML my.Canvas
  */
 //var SimpleGraph = require('SimpleGraph').SimpleGraph
-var CanvasGraph = function(Graph) {
-	var my = {}, vrad = 12
+var CanvasGraph = function(Graph, storePath=true) {
+	console.log('Graph lib')
+	console.log(Graph)
+	var my = {}, vrad = 12 
 	my.CanvasVertex = function(x, y) {
 		this.x = x
 		this.y = y
-		this.path = new Path2D() 
-		this.path.arc(x, y, vrad, 0, 2 * Math.PI)
-		this.contains = function(x, y) {
-			return ctx.isPointInPath(this.path, x, y)
+		if (storePath) {
+			this.path = new Path2D() 
+			this.path.arc(x, y, vrad, 0, 2 * Math.PI)
+			this.contains = function(x, y) {
+				return ctx.isPointInPath(this.path, x, y)
+			}
+		}
+		else {
+			this.contains = function(x, y) { // we still need a contains function, but can't use path
+				return (this.x-x)*(this.x-x) + (this.y-y)*(this.y-y) < vrad*vrad
+			}
 		}
 	}
 	my.CanvasVertex.prototype = new Graph.Vertex()
 	my.CanvasEdge = function(vertices) {
-		console.log('constructing edge')
 		this.vertices = new Set(vertices)
-		this.path = new Path2D()
-		this.path.moveTo(vertices[0].x, vertices[0].y)
-		this.path.lineTo(vertices[1].x, vertices[1].y)
-		console.log(this)
+		if (storePath) {
+			this.path = new Path2D()
+			this.path.moveTo(vertices[0].x, vertices[0].y)
+			this.path.lineTo(vertices[1].x, vertices[1].y)
+		}
 	}
 	my.CanvasEdge.prototype = new Graph.Edge()
 	my.CanvasGraph = function(g) {
@@ -30,7 +39,6 @@ var CanvasGraph = function(Graph) {
 		this.edges = base.edges
 		this.drawer = new my.Drawer()
 		this.addV = function(v, drawer=this.drawer) {
-			console.log('adding v')
 			Graph.Graph.prototype.addV.call(this, v) 
 			if (drawer.lastDrawn) { // if we're drawing, add Edge
 				Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) )
@@ -46,7 +54,6 @@ var CanvasGraph = function(Graph) {
 			Graph.Graph.prototype.delV.call(this, v)
 		}
 		this.close = function(v, drawer=this.drawer) { // "close" a graph 
-			console.log('closing')
 			if (v === drawer.lastDrawn) return
 			Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) ) 
 			drawer.lastDrawn = undefined

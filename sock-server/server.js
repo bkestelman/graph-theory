@@ -7,7 +7,7 @@ console.log('listening on port ' + port)
 
 var SimpleGraph = require('../scripts/simplegraph.js').SimpleGraph
 console.log(SimpleGraph)
-var CanvasGraph = require('../scripts/canvasgraph.js').CanvasGraph(SimpleGraph)
+var CanvasGraph = require('../scripts/canvasgraph.js').CanvasGraph(SimpleGraph(), storePath=false)
 var fullgraph = new CanvasGraph.CanvasGraph()
 
 io.on('connection', function(socket) {
@@ -28,7 +28,7 @@ io.on('connection', function(socket) {
 			fullgraph.close( update.close, update.drawer )
 		}
 		else if (update.delV) {
-			fullgraph.delV( graph.getV(update.delV.x, update.delV.y) )
+			fullgraph.delV( fullgraph.getV(update.delV.x, update.delV.y) )
 		}
 	})
 
