@@ -2,18 +2,15 @@
  * SimpleGraph
  * Stores a Set of vertices and a Set of edges 
  * Vertices do not maintain adjacency lists
- */
-
-/** 
- * SimpleGraph Module
+ * Order of updates does not matter
  */
 var SimpleGraph = function() {
 	var my = {}
 
 	my.Vertex = function() {
 	}
-	my.Edge = function(vertices) {
-		this.vertices = vertices || new Set()
+	my.Edge = function(vertices) { // vertices can be any iterable
+		this.vertices = new Set(vertices) 
 	}
 	my.Edge.prototype.isAdj = function(v) {
 		for (var _v of this.vertices) {
@@ -21,16 +18,15 @@ var SimpleGraph = function() {
 		}
 		return false
 	}
-	my.Graph = function() {
-		this.vertices = new Set() 
-		this.edges = new Set() 
+	my.Graph = function(g) { 
+		g = g || { vertices: [], edges: [] }
+		this.vertices = new Set(g.vertices) 
+		this.edges = new Set(g.edges)
 	}
 	my.Graph.prototype.addV = function(v) { this.vertices.add(v) }
 	my.Graph.prototype.addE = function(e) { this.edges.add(e) }
-	my.Graph.prototype.delV = function(v) { // Also delete adjacent Edges
-		console.log('deleting v')
+	my.Graph.prototype.delV = function(v) { // Also deletes adjacent Edges
 		this.vertices.delete(v)
-		console.log('deleting adj edges')
 		for (var e of this.edges) {
 			if (e.isAdj(v)) {
 				this.edges.delete(e)
@@ -43,4 +39,3 @@ var SimpleGraph = function() {
 }
 
 module.exports.SimpleGraph = SimpleGraph
-//export {SimpleGraph}
