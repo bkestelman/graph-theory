@@ -21,11 +21,12 @@ We assume you have Docker installed.
 git clone https://github.com/bkestelman/graph-theory
 cd graph-theory
 docker build . -f Dockerfile -t graph-theory
-bash docker_run.sh
+bash docker_run.sh [TAG] [HTTP_PORT] [NODEJS_PORT] # defaults are latest, 80, 3000
 ```
 Or
 ```
 docker pull bkestelman/graph-theory
+# Set ports as desired
 docker run -it -p 80:80 -p 3000:3000 --env HOST_IP=localhost --env HTTP_PORT=80 --env NODEJS_PORT=3000 bkestelman/graph-theory
 ```
 Go to your server's public ip in your browser (or localhost if running locally) and start drawing. If using a public ip, your friends can join in too!
@@ -49,7 +50,7 @@ a. Make a copy of /etc/nginx/sites-available/default for the graph-theory site
 cp /etc/nginx/sites-available/{default,graph-theory}
 ```
 b. Modify the site root to point to the graph-theory html root 
-Open /etc/nginx/sites-available/graph-theory with your favorite text editor (vim) and change `root /var/www/html` to `root /var/www/graph-theory/html`
+Open /etc/nginx/sites-available/graph-theory with your favorite text editor and change `root /var/www/html` to `root /var/www/graph-theory/html`
 
 c. Change the enabled site to point to graph-theory
 ```
