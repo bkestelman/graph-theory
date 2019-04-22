@@ -18,13 +18,24 @@ var SimpleGraph = function() {
 		}
 		return false
 	}
+	my.Edge.prototype.equals = function(e) {
+		for (var v of e.vertices) {
+			if (! this.vertices.has(v)) return false
+		}
+		return true
+	}
 	my.Graph = function(g) { 
 		g = g || { vertices: [], edges: [] }
 		this.vertices = new Set(g.vertices) 
 		this.edges = new Set(g.edges)
 	}
 	my.Graph.prototype.addV = function(v) { this.vertices.add(v) }
-	my.Graph.prototype.addE = function(e) { this.edges.add(e) }
+	my.Graph.prototype.addE = function(e) { 
+		for (var _e of this.edges) { // don't add if edge already exists
+			if (e.equals(_e)) return
+		}
+		this.edges.add(e) 
+	}
 	my.Graph.prototype.delV = function(v) { // Also deletes adjacent Edges
 		this.vertices.delete(v)
 		for (var e of this.edges) {
