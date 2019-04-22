@@ -4,6 +4,8 @@ graph-theory is an easy way to draw graphs (the ones with vertices and edges, no
 
 A demo graph-theory server is running (hopefully!) at http://192.81.214.140
 
+Left-click to add a vertex, right-click to delete. Edges are added automatically
+
 Feel free to open issues for bug reports or feature requests!
 
 ## Setup

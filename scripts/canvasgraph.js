@@ -57,7 +57,10 @@ var CanvasGraph = function(Graph, ctx, storePath=true) {
 		Graph.Graph.prototype.delV.call(this, v)
 	}
 	my.CanvasGraph.prototype.close = function(v, drawer=my.drawer) { // "close" a graph 
-		if (v === drawer.lastDrawn) return
+		if (v === drawer.lastDrawn) {
+			drawer.lastDrawn = undefined
+			return
+		}
 		Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) ) 
 		drawer.lastDrawn = undefined
 	}
