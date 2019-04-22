@@ -5,7 +5,7 @@
  * On client, use storePath=true so client can draw the Graph
  * On server, use storePath=false (server just needs coordinate data and functions, but won't draw) 
  */
-var CanvasGraph = function(Graph, storePath=true) {
+var CanvasGraph = function(Graph, ctx, storePath=true) {
 	var my = {}, vrad = 12 
 
 	my.CanvasVertex = function(x, y) {
@@ -63,7 +63,7 @@ var CanvasGraph = function(Graph, storePath=true) {
 	}
 	my.CanvasGraph.prototype.draw = function() {
 		for (var v of this.vertices) {
-			if (v.contains(mousex, mousey)) {
+			if (v.contains(ctx.mousex, ctx.mousey)) {
 				ctx.strokeStyle = 'cyan'
 			}
 			else {
@@ -86,4 +86,4 @@ var CanvasGraph = function(Graph, storePath=true) {
 	return my
 }
 
-module.exports.CanvasGraph = CanvasGraph
+//module.exports.CanvasGraph = CanvasGraph

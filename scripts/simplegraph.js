@@ -49,4 +49,4 @@ var SimpleGraph = function() {
 	return my
 }
 
-module.exports.SimpleGraph = SimpleGraph
+//module.exports.SimpleGraph = SimpleGraph
