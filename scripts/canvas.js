@@ -4,50 +4,53 @@
  * Uses CanvasGraph for drawing
  * Broadcasts updates through socket
  */
-(function(Socket) {
-	var canvas = document.getElementById('canvas')
-	var ctx = canvas.getContext('2d')
-	var CG = CanvasGraph(SimpleGraph(), ctx)
-	var graph = new CG.CanvasGraph()
-	var sock = Socket(CG, graph)
+var Canvas = (function(Socket) {
+	var my = {}
+	my.canvas = document.getElementById('canvas')
+	my.ctx = canvas.getContext('2d')
+	my.CG = CanvasGraph(SimpleGraph(), my.ctx)
+	my.graph = new my.CG.CanvasGraph()
+	my.sock = Socket(my.CG, my.graph)
 
 	canvas.addEventListener('click', function(event) {
 		var x = event.offsetX
 		var y = event.offsetY 
-		var clickedV = graph.getV(x, y) 
+		var clickedV = my.graph.getV(x, y) 
 		if (clickedV) { // if we clicked an existing Vertex
-			if (CG.drawer.lastDrawn) {
-				sock.broadcast({ close: clickedV }) 
-				var newe = graph.close(clickedV) // "close" the graph
+			if (my.CG.drawer.lastDrawn) {
+				my.sock.broadcast({ close: clickedV }) 
+				var newe = my.graph.close(clickedV) // "close" the graph
 			}
 			else { 
-				CG.drawer.lastDrawn = clickedV
+				my.CG.drawer.lastDrawn = clickedV
 			}
 		}
 		else { // otherwise add a new Vertex
-			var newv = new CG.CanvasVertex(x, y)
-			sock.broadcast({ addV: newv })
-			graph.addV(newv) 
+			var newv = new my.CG.CanvasVertex(x, y)
+			my.sock.broadcast({ addV: newv })
+			my.graph.addV(newv) 
 		}
 	})
 	canvas.addEventListener('contextmenu', function(event) { // right click
 		event.preventDefault() // don't open menu
 		var x = event.offsetX
 		var y = event.offsetY 
-		var clickedV = graph.getV(x, y)
-		sock.broadcast({ delV: clickedV })
-		graph.delV(clickedV)
+		var clickedV = my.graph.getV(x, y)
+		my.sock.broadcast({ delV: clickedV })
+		my.graph.delV(clickedV)
 		return false
 	})
 	canvas.addEventListener('mousemove', function(event) {
-		ctx.mousex = event.offsetX
-		ctx.mousey = event.offsetY
+		my.ctx.mousex = event.offsetX
+		my.ctx.mousey = event.offsetY
 	})
 
-	function draw() { // clear canvas and draw graph
-		ctx.clearRect(0, 0, canvas.width, canvas.height)
-		graph.draw()
-		window.requestAnimationFrame(draw) 
+	my.draw = function() { // clear canvas and draw graph
+		my.ctx.clearRect(0, 0, canvas.width, canvas.height)
+		my.graph.draw()
+		window.requestAnimationFrame(my.draw) 
 	}
-	window.requestAnimationFrame(draw) 
+	window.requestAnimationFrame(my.draw) 
+	
+	return my
 })(Socket)

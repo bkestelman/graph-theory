@@ -3,7 +3,7 @@
 !entrypoint.sh
 
 !scripts/*
-!html/template.html
+!template.html
 !sock-server/server.js
 !sock-server/package.json
 

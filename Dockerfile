@@ -21,7 +21,7 @@ RUN mkdir -p /run/nginx
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # copy client code
-COPY html/template.html ${SITE_ROOT}/index.html
+COPY template.html ${SITE_ROOT}/index.html
 COPY scripts/ ${SITE_ROOT}/scripts/
 
 COPY entrypoint.sh entrypoint.sh
