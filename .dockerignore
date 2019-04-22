@@ -1,10 +1,10 @@
 **
 !Dockerfile
 !entrypoint.sh
-!setup.sh
 
+!scripts/*
 !html/template.html
-!nginx/default.conf
-
-!sock-server/package.json
 !sock-server/server.js
+!sock-server/package.json
+
+!nginx/*

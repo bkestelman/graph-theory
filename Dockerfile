@@ -19,7 +19,10 @@ RUN chown -R www:www /var/lib/nginx
 RUN chown -R www:www ${SITE_ROOT}
 RUN mkdir -p /run/nginx
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY html/template.html ${SITE_ROOT}/template.html
+
+# copy client code
+COPY html/template.html ${SITE_ROOT}/index.html
+COPY scripts/ ${SITE_ROOT}/scripts/
 
 COPY entrypoint.sh entrypoint.sh
 

@@ -8,8 +8,8 @@
   },
   "keywords": [
     "canvas",
-	"graph",
-	"graph-theory",
+    "graph",
+    "graph-theory",
     "socket.io"
   ],
   "author": "Benito Kestelman",
