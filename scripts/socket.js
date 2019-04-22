@@ -3,7 +3,7 @@
  * High level interface for exchanging updates with server through web socket
  */
 var Socket = function(CG, graph) {
-	var my = {}, socket = io('localhost:5000')
+	var my = {}, socket = io('${HOST_IP}:${NODEJS_PORT}')
 
 	my.applyUpdate = function(update) { // apply an update received from server to client's graph
 		if (update.drawer.lastDrawn) {

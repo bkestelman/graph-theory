@@ -1,6 +1,4 @@
-//import {SimpleGraph} from '../scripts/simplegraph.js'
-//import {CanvasGraph} from '../scripts/simplegraph.js'
-var port = process.env.NODEJS_PORT || 5000
+var port = process.env.NODEJS_PORT || 3000
 
 var io = require('socket.io')(port)
 console.log('listening on port ' + port)
