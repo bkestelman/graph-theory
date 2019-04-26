@@ -7,10 +7,12 @@
  */
 var CanvasGraph = function(Graph, ctx, storePath=true) {
 	var my = {}, vrad = 12 
+	my.defaultColor = 'white'
 
 	my.CanvasVertex = function(x, y) {
 		this.x = x
 		this.y = y
+		this.color = my.defaultColor 
 		if (storePath) { // draw circle
 			this.path = new Path2D() 
 			this.path.arc(x, y, vrad, 0, 2 * Math.PI)
@@ -19,6 +21,11 @@ var CanvasGraph = function(Graph, ctx, storePath=true) {
 	my.CanvasVertex.prototype = new Graph.Vertex()
 	my.CanvasVertex.prototype.contains = function(x, y) {
 		return (this.x-x)*(this.x-x) + (this.y-y)*(this.y-y) <= vrad*vrad
+	}
+	my.cloneVertex = function(spec) {
+		var newv = new my.CanvasVertex(spec.x, spec.y)
+		newv.color = spec.color
+		return newv
 	}
 	my.CanvasEdge = function(vertices) {
 		this.vertices = new Set(vertices)
@@ -73,6 +80,8 @@ var CanvasGraph = function(Graph, ctx, storePath=true) {
 				ctx.strokeStyle = 'black'
 			}
 			ctx.stroke(v.path)
+			ctx.fillStyle = v.color || my.defaultColor 
+			ctx.fill(v.path)
 		}
 		ctx.strokeStyle = 'black'
 		for (var e of this.edges) {

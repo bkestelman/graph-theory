@@ -44,6 +44,10 @@ var Canvas = (function(Socket) {
 		my.ctx.mousex = event.offsetX
 		my.ctx.mousey = event.offsetY
 	})
+	my.colorPicker = document.getElementById('color')
+	my.colorPicker.addEventListener('change', function(event) {
+		my.CG.defaultColor = event.target.value
+	})
 
 	my.draw = function() { // clear canvas and draw graph
 		my.ctx.clearRect(0, 0, canvas.width, canvas.height)
