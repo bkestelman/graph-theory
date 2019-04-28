@@ -7,13 +7,12 @@
 var CanvasGraph = function(ctx, spec) {
 	SimpleGraph.call(this, spec)
 	this.ctx = ctx
-	//this.lastDrawn = {}
 	this.drawer = {}
 }
 CanvasGraph.prototype = Object.create(SimpleGraph.prototype)
 CanvasGraph.prototype.createV = function(spec) { // should be a method of Vertex or static
 	var newv = new this.Vertex(spec.x, spec.y)
-	newv.color = spec.color 
+	newv.color = spec.color || newv.color
 	return newv
 }
 CanvasGraph.prototype.equalV = function(a, b) {
@@ -24,7 +23,7 @@ CanvasGraph.prototype.equalV = function(a, b) {
 CanvasGraph.prototype.getOrCreateV = function(v) {
 	if (!v) return 
 	if (v.x !== undefined && v.y !== undefined) {
-		return this.getV(v.x, v.y) || this.createV({ x: v.x, y: v.y })
+		return this.getV(v.x, v.y) || this.createV(v)
 	}
 }
 CanvasGraph.prototype.getV = function(x, y) {
@@ -79,7 +78,7 @@ CanvasGraph.prototype.Vertex = function(x, y) {
 	SimpleGraph.prototype.Vertex.call(this)
 	this.x = x
 	this.y = y
-	this.color = CanvasGraph.defaultColor 
+	this.color = CanvasGraph.defaultColor.slice(0)
 	this.path = new Path2D() 
 	this.path.arc(x, y, CanvasGraph.vrad, 0, 2 * Math.PI) // circle
 }

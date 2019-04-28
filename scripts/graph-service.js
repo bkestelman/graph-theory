@@ -10,7 +10,7 @@ var GraphingService = function(Graph, Server, ctx) {
 	// called by CanvasController
 	this.addV = function(x, y) {
 		console.log('GraphingService addV')
-		var v = { x: x, y: y }
+		var v = { x: x, y: y, color: Graph.defaultColor }
 		this.broadcast({ addV: v, drawer: this.drawer }) 
 		v = Graph.prototype.addV.call(this, v)
 	}
@@ -20,7 +20,7 @@ var GraphingService = function(Graph, Server, ctx) {
 		this.broadcast({ delV: v }) 
 		Graph.prototype.delV.call(this, v)
 	}
-	this.setColor = function(color) { this.defaultColor = color } // this belongs in a plugin
+	this.setColor = function(color) { Graph.defaultColor = color } // this belongs in a plugin
 	// server 
 	this.broadcast = function(update) {
 		console.log('broadcasting')
