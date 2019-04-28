@@ -12,7 +12,7 @@ var CanvasGraph = function(ctx, spec) {
 CanvasGraph.prototype = Object.create(SimpleGraph.prototype)
 CanvasGraph.prototype.createV = function(spec) { // should be a method of Vertex or static
 	var newv = new this.Vertex(spec.x, spec.y)
-	newv.color = spec.color || newv.color
+	//newv.color = spec.color || newv.color
 	return newv
 }
 CanvasGraph.prototype.equalV = function(a, b) {
