@@ -1,101 +1,96 @@
 /** 
- * my.CanvasGraph
- * Augments SimpleGraph with functionality for drawing on an HTML my.Canvas
- * Reconstructable from the "updates" which created another Graph
- * On client, use storePath=true so client can draw the Graph
- * On server, use storePath=false (server just needs coordinate data and functions, but won't draw) 
+ * CanvasGraph Constructor 
+ * Designed for HTML Canvas
+ * Detects if a Vertex already exists when adding
+ * Functions accept Vertex/Edge objects or their specs
  */
-var CanvasGraph = function(Graph, ctx, storePath=true) {
-	var my = {}, vrad = 12 
-	my.defaultColor = 'white'
-
-	my.CanvasVertex = function(x, y) {
-		this.x = x
-		this.y = y
-		this.color = my.defaultColor 
-		if (storePath) { // draw circle
-			this.path = new Path2D() 
-			this.path.arc(x, y, vrad, 0, 2 * Math.PI)
-		}
-	}
-	my.CanvasVertex.prototype = new Graph.Vertex()
-	my.CanvasVertex.prototype.contains = function(x, y) {
-		return (this.x-x)*(this.x-x) + (this.y-y)*(this.y-y) <= vrad*vrad
-	}
-	my.cloneVertex = function(spec) {
-		var newv = new my.CanvasVertex(spec.x, spec.y)
-		newv.color = spec.color
-		return newv
-	}
-	my.CanvasEdge = function(vertices) {
-		this.vertices = new Set(vertices)
-		if (storePath) { // draw line
-			this.path = new Path2D()
-			this.path.moveTo(vertices[0].x, vertices[0].y)
-			this.path.lineTo(vertices[1].x, vertices[1].y)
-		}
-	}
-	my.CanvasEdge.prototype = new Graph.Edge()
-
-	my.Drawer = function() { // keep track of multiple users drawing on one Graph
-		this.lastDrawn // last Vertex drawn by this Drawer
-	}
-	my.drawer = new my.Drawer() 
-
-	my.CanvasGraph = function(g) {
-		var base = new Graph.Graph(g)
-		this.vertices = base.vertices
-		this.edges = base.edges
-	}
-	my.CanvasGraph.prototype = new Graph.Graph()
-	my.CanvasGraph.prototype.addV = function(v, drawer=my.drawer) {
-		Graph.Graph.prototype.addV.call(this, v) 
-		if (drawer.lastDrawn) { // if we're currently drawing, add Edge
-			Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) )
-		}
-		drawer.lastDrawn = v
-		return v
-	}
-	my.CanvasGraph.prototype.delV = function(v) {
-		if (!v) return
-		if (v === my.drawer.lastDrawn) { 
-			my.drawer.lastDrawn = undefined
-		}
-		Graph.Graph.prototype.delV.call(this, v)
-	}
-	my.CanvasGraph.prototype.close = function(v, drawer=my.drawer) { // "close" a graph 
-		if (v === drawer.lastDrawn) {
-			drawer.lastDrawn = undefined
-			return
-		}
-		Graph.Graph.prototype.addE.call( this, new my.CanvasEdge([ drawer.lastDrawn, v ]) ) 
-		drawer.lastDrawn = undefined
-	}
-	my.CanvasGraph.prototype.draw = function() {
-		for (var v of this.vertices) {
-			if (v.contains(ctx.mousex, ctx.mousey)) {
-				ctx.strokeStyle = 'cyan'
-			}
-			else {
-				ctx.strokeStyle = 'black'
-			}
-			ctx.stroke(v.path)
-			ctx.fillStyle = v.color || my.defaultColor 
-			ctx.fill(v.path)
-		}
-		ctx.strokeStyle = 'black'
-		for (var e of this.edges) {
-			ctx.stroke(e.path)
-		}
-	}
-	my.CanvasGraph.prototype.getV = function(x, y) {
-		for (var v of this.vertices) {
-			if (v.contains(x, y)) {
-				return v
-			}
-		}
-	}
-	return my
+var CanvasGraph = function(ctx, spec) {
+	SimpleGraph.call(this, spec)
+	this.ctx = ctx
+	//this.lastDrawn = {}
+	this.drawer = {}
 }
-
-//module.exports.CanvasGraph = CanvasGraph
+CanvasGraph.prototype = Object.create(SimpleGraph.prototype)
+CanvasGraph.prototype.createV = function(spec) { // should be a method of Vertex or static
+	var newv = new this.Vertex(spec.x, spec.y)
+	newv.color = spec.color 
+	return newv
+}
+CanvasGraph.prototype.equalV = function(a, b) {
+	if (!a || !b) return false
+	if (a.x === b.x && a.y === b.y) return true
+	return false
+}
+CanvasGraph.prototype.getOrCreateV = function(v) {
+	if (!v) return 
+	if (v.x !== undefined && v.y !== undefined) {
+		return this.getV(v.x, v.y) || this.createV({ x: v.x, y: v.y })
+	}
+}
+CanvasGraph.prototype.getV = function(x, y) {
+	for (var v of this.vertices) {
+		if (v.contains(x, y)) {
+			return v } } }
+CanvasGraph.prototype.addV = function(v, drawer) {
+	console.log('CanvasGraph addV')
+	if (drawer) drawer.lastDrawn = this.getOrCreateV(drawer.lastDrawn)
+	else drawer = this.drawer
+	v = this.getOrCreateV(v)
+	if (this.equalV(drawer.lastDrawn, v)) { // if "adding" v from itself...
+		drawer.lastDrawn = undefined // unset lastDrawn 
+		return // do nothing
+	}
+	SimpleGraph.prototype.addV.call(this, v) 
+	if (drawer.lastDrawn) { // add edge (lastDrawn--v)
+		this.addE(new this.Edge([ drawer.lastDrawn, v ])) 
+	}
+	drawer.lastDrawn = v
+	return v
+}
+CanvasGraph.prototype.delV = function(v) {
+	console.log('CanvasGraph delV')
+	v = this.getV(v.x, v.y)
+	if (!v) return
+	if (v === this.drawer.lastDrawn) { 
+		this.drawer.lastDrawn = undefined
+	}
+	SimpleGraph.prototype.delV.call(this, v)
+}
+CanvasGraph.prototype.draw = function() {
+	for (var v of this.vertices) {
+		if (v.contains(this.ctx.mousex, this.ctx.mousey)) {
+			this.ctx.strokeStyle = 'cyan'
+		}
+		else {
+			this.ctx.strokeStyle = 'black'
+		}
+		this.ctx.stroke(v.path)
+		this.ctx.fillStyle = v.color || this.defaultColor 
+		this.ctx.fill(v.path)
+	}
+	this.ctx.strokeStyle = 'black'
+	for (var e of this.edges) {
+		this.ctx.stroke(e.path)
+	}
+}
+CanvasGraph.defaultColor = 'white'
+CanvasGraph.vrad = 12
+CanvasGraph.prototype.Vertex = function(x, y) {
+	SimpleGraph.prototype.Vertex.call(this)
+	this.x = x
+	this.y = y
+	this.color = CanvasGraph.defaultColor 
+	this.path = new Path2D() 
+	this.path.arc(x, y, CanvasGraph.vrad, 0, 2 * Math.PI) // circle
+}
+CanvasGraph.prototype.Vertex.prototype = Object.create(SimpleGraph.prototype.Vertex.prototype)
+CanvasGraph.prototype.Vertex.prototype.contains = function(x, y) {
+	return (this.x-x)*(this.x-x) + (this.y-y)*(this.y-y) <= CanvasGraph.vrad*CanvasGraph.vrad
+}
+CanvasGraph.prototype.Edge = function(vertices) {
+	SimpleGraph.prototype.Edge.call(this, vertices)
+	this.path = new Path2D()
+	this.path.moveTo(vertices[0].x, vertices[0].y)
+	this.path.lineTo(vertices[1].x, vertices[1].y)
+}
+CanvasGraph.prototype.Edge.prototype = Object.create(SimpleGraph.prototype.Edge.prototype)

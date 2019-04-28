@@ -8,8 +8,9 @@ RUN apk update \
 # nodejs setup 
 ENV SOCK_SERVER_ROOT=/root/sock-server
 RUN mkdir ${SOCK_SERVER_ROOT} 
-COPY sock-server/package.json sock-server/server.js ${SOCK_SERVER_ROOT}/
+COPY sock-server/package.json ${SOCK_SERVER_ROOT}/
 RUN cd ${SOCK_SERVER_ROOT} && npm install 
+COPY sock-server/server.js ${SOCK_SERVER_ROOT}/
 
 # nginx setup 
 ENV SITE_ROOT=/www

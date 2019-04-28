@@ -1,52 +1,50 @@
 /**
- * SimpleGraph
- * Stores a Set of vertices and a Set of edges 
+ * SimpleGraph Constructor
+ * Stores a Set of Vertices and a Set of Edges 
  * Vertices do not maintain adjacency lists
- * Order of updates does not matter
+ * The order of updates does not matter
  */
-var SimpleGraph = function() {
-	var my = {}
-
-	my.Vertex = function() {
-	}
-	my.Edge = function(vertices) { // vertices can be any iterable
-		this.vertices = new Set(vertices) 
-	}
-	my.Edge.prototype.isAdj = function(v) {
-		for (var _v of this.vertices) {
-			if (v === _v) return true
-		}
-		return false
-	}
-	my.Edge.prototype.equals = function(e) {
-		for (var v of e.vertices) {
-			if (! this.vertices.has(v)) return false
-		}
-		return true
-	}
-	my.Graph = function(g) { 
-		g = g || { vertices: [], edges: [] }
-		this.vertices = new Set(g.vertices) 
-		this.edges = new Set(g.edges)
-	}
-	my.Graph.prototype.addV = function(v) { this.vertices.add(v) }
-	my.Graph.prototype.addE = function(e) { 
-		for (var _e of this.edges) { // don't add if edge already exists
-			if (e.equals(_e)) return
-		}
-		this.edges.add(e) 
-	}
-	my.Graph.prototype.delV = function(v) { // Also deletes adjacent Edges
-		this.vertices.delete(v)
-		for (var e of this.edges) {
-			if (e.isAdj(v)) {
-				this.edges.delete(e)
-			}
-		}
-	}
-	my.Graph.prototype.delE = function(e) { this.edges.delete(e) }
-
-	return my
+var SimpleGraph = function(spec) {
+	spec = spec || { vertices: [], edges: [] }
+	this.vertices = new Set(spec.vertices)
+	this.edges = new Set(spec.edges)
 }
+SimpleGraph.prototype.addV = function(v) { console.log('SimpleGraph addV'); this.vertices.add(v) }
+SimpleGraph.prototype.addE = function(e) { 
+	console.log('SimpleGraph addE')
+	for (var _e of this.edges) { // don't add if edge exists
+		if (e.equals(_e)) return
+	}
+	this.edges.add(e) 
+}
+SimpleGraph.prototype.delV = function(v) { 
+	console.log('SimpleGraph delV')
+	this.vertices.delete(v)
+	console.log('deleting adj edges')
+	for (var e of this.edges) { // delete adjacent edges
+		if (e.isAdj(v)) {
+			console.log('deleting edge')
+			console.log(e)
+			this.edges.delete(e)
+		}
+	}
+}
+SimpleGraph.prototype.delE = function(e) { console.log('SimpleGraph delE'); this.edges.delete(e) }
 
-//module.exports.SimpleGraph = SimpleGraph
+SimpleGraph.prototype.Vertex = function() {
+}
+SimpleGraph.prototype.Edge = function(vertices) { 
+	this.vertices = new Set(vertices) 
+}
+SimpleGraph.prototype.Edge.prototype.isAdj = function(v) {
+	for (var _v of this.vertices) {
+		if (v === _v) return true
+	}
+	return false
+}
+SimpleGraph.prototype.Edge.prototype.equals = function(e) {
+	for (var v of e.vertices) {
+		if (! this.vertices.has(v)) return false
+	}
+	return true
+}
