@@ -7,7 +7,7 @@ NODEJS_PORT=${3:-3000}
 HOST_IP=$(ip route get 1 | awk '{ print $NF; exit }')
 
 # Run container, add host ip to container's /etc/hosts, and publish ports
-docker run -it \
+docker run --rm -it \
 	-p ${HTTP_PORT}:${HTTP_PORT} -p ${NODEJS_PORT}:${NODEJS_PORT} \
 	--env HOST_IP=${HOST_IP} \
 	--env HTTP_PORT=${HTTP_PORT} \
