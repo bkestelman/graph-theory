@@ -10,4 +10,11 @@ var ColorPlugin = (function(gs) {
 		newv.color = spec.color || Graph.defaultColor.slice(0)
 		return newv
 	}
+	Graph.prototype.drawHookV = function(v) {
+		gs.ctx.fillStyle = v.color || Graph.defaultColor 
+		gs.ctx.fill(v.path)
+	}
+	Graph.VertexHook = function(v) {
+		v.color = Graph.defaultColor
+	}
 }(CanvasController.graph))

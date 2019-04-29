@@ -12,7 +12,6 @@ var CanvasGraph = function(ctx, spec) {
 CanvasGraph.prototype = Object.create(SimpleGraph.prototype)
 CanvasGraph.prototype.createV = function(spec) { // should be a method of Vertex or static
 	var newv = new this.Vertex(spec.x, spec.y)
-	//newv.color = spec.color || newv.color
 	return newv
 }
 CanvasGraph.prototype.equalV = function(a, b) {
@@ -64,23 +63,25 @@ CanvasGraph.prototype.draw = function() {
 			this.ctx.strokeStyle = 'black'
 		}
 		this.ctx.stroke(v.path)
-		this.ctx.fillStyle = v.color || this.defaultColor 
-		this.ctx.fill(v.path)
+		this.drawHookV(v)
 	}
 	this.ctx.strokeStyle = 'black'
 	for (var e of this.edges) {
 		this.ctx.stroke(e.path)
 	}
 }
+CanvasGraph.prototype.drawHookV = function(v) {}
 CanvasGraph.defaultColor = 'white'
 CanvasGraph.vrad = 12
+CanvasGraph.VertexHook = function(v) {}
 CanvasGraph.prototype.Vertex = function(x, y) {
 	SimpleGraph.prototype.Vertex.call(this)
 	this.x = x
 	this.y = y
-	this.color = CanvasGraph.defaultColor.slice(0)
+	//this.color = CanvasGraph.defaultColor.slice(0)
 	this.path = new Path2D() 
 	this.path.arc(x, y, CanvasGraph.vrad, 0, 2 * Math.PI) // circle
+	CanvasGraph.VertexHook(this)
 }
 CanvasGraph.prototype.Vertex.prototype = Object.create(SimpleGraph.prototype.Vertex.prototype)
 CanvasGraph.prototype.Vertex.prototype.contains = function(x, y) {
