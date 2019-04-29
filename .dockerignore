@@ -4,7 +4,7 @@
 
 !scripts/*
 !tests/*
-!template.html
+!*.html
 !sock-server/server.js
 !sock-server/package.json
 

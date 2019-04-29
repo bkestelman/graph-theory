@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # substitute variables in *.template files 
 for f in ${SITE_ROOT}/*.html ${SITE_ROOT}/scripts/*; do
 	sed -i "s;\${HOST_IP};http://${HOST_IP};" $f 

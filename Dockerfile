@@ -26,6 +26,7 @@ COPY index.html ${SITE_ROOT}/index.html
 COPY scripts/ ${SITE_ROOT}/scripts/
 COPY tests/ ${SITE_ROOT}/tests/
 
-COPY entrypoint.sh entrypoint.sh
+COPY entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod u+x /usr/bin/entrypoint.sh
 
-CMD ./entrypoint.sh
+ENTRYPOINT [ "entrypoint.sh" ]
