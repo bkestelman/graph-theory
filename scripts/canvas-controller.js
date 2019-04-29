@@ -6,8 +6,8 @@ var CanvasController = (function() {
 	var my = {}
 	my.canvas = document.getElementById('canvas')
 	my.ctx = canvas.getContext('2d')
-	GraphingService.prototype = Object.create(CanvasGraph.prototype)
-	my.graph = new GraphingService(CanvasGraph, Server, my.ctx)
+	GraphService.prototype = Object.create(CanvasGraph.prototype) // TODO: this belongs somewhere else
+	my.graph = new GraphService(CanvasGraph, Server, my.ctx)
 
 	canvas.addEventListener('click', function(event) {
 		var x = event.offsetX

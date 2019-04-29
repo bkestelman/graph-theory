@@ -17,4 +17,5 @@ var ColorPlugin = (function(gs) {
 	Graph.VertexHook = function(v) {
 		v.color = Graph.defaultColor
 	}
+	gs.setColor = function(color) { Graph.defaultColor = color } 
 }(CanvasController.graph))

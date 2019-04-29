@@ -1,10 +1,10 @@
 /**
  * GraphingService
- * Expose functions to update a Graph
- * Send updates to a Server
- * Listen for updates from Server -> update Graph
+ * Exposes functions to update Graph
+ * Sends updates to Server
+ * Listens for updates from Server -> updates Graph
  */
-var GraphingService = function(Graph, Server, ctx) {
+var GraphService = function(Graph, Server, ctx) {
 	Graph.call(this, ctx)
 	this.Graph = Graph
 	// called by CanvasController
@@ -20,7 +20,6 @@ var GraphingService = function(Graph, Server, ctx) {
 		this.broadcast({ delV: v }) 
 		Graph.prototype.delV.call(this, v)
 	}
-	this.setColor = function(color) { Graph.defaultColor = color } // this belongs in a plugin
 	// server 
 	this.broadcast = function(update) {
 		console.log('broadcasting')
