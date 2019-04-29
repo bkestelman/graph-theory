@@ -22,7 +22,7 @@ RUN mkdir -p /run/nginx
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # copy client code
-COPY template.html ${SITE_ROOT}/index.html
+COPY index.html ${SITE_ROOT}/index.html
 COPY scripts/ ${SITE_ROOT}/scripts/
 COPY tests/ ${SITE_ROOT}/tests/
 
