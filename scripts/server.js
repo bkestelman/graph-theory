@@ -13,8 +13,6 @@ var Server = function() {
 		return this
 	}
 	this.broadcast = function(update) { // send update to server
-		console.log('Server broadcasting')
-		console.log(update)
 		this.socket.emit('update', update)
 	}
 	this.onUpdate = function(callback) {

@@ -9,27 +9,22 @@ var SimpleGraph = function(spec) {
 	this.vertices = new Set(spec.vertices)
 	this.edges = new Set(spec.edges)
 }
-SimpleGraph.prototype.addV = function(v) { console.log('SimpleGraph addV'); this.vertices.add(v) }
+SimpleGraph.prototype.addV = function(v) { this.vertices.add(v) }
 SimpleGraph.prototype.addE = function(e) { 
-	console.log('SimpleGraph addE')
 	for (var _e of this.edges) { // don't add if edge exists
 		if (e.equals(_e)) return
 	}
 	this.edges.add(e) 
 }
 SimpleGraph.prototype.delV = function(v) { 
-	console.log('SimpleGraph delV')
 	this.vertices.delete(v)
-	console.log('deleting adj edges')
 	for (var e of this.edges) { // delete adjacent edges
 		if (e.isAdj(v)) {
-			console.log('deleting edge')
-			console.log(e)
 			this.edges.delete(e)
 		}
 	}
 }
-SimpleGraph.prototype.delE = function(e) { console.log('SimpleGraph delE'); this.edges.delete(e) }
+SimpleGraph.prototype.delE = function(e) { this.edges.delete(e) }
 
 SimpleGraph.prototype.Vertex = function() {
 }

@@ -30,7 +30,6 @@ CanvasGraph.prototype.getV = function(x, y) {
 		if (v.contains(x, y)) {
 			return v } } }
 CanvasGraph.prototype.addV = function(v, drawer) {
-	console.log('CanvasGraph addV')
 	if (drawer) drawer.lastDrawn = this.getOrCreateV(drawer.lastDrawn)
 	else drawer = this.drawer
 	v = this.getOrCreateV(v)
@@ -46,7 +45,6 @@ CanvasGraph.prototype.addV = function(v, drawer) {
 	return v
 }
 CanvasGraph.prototype.delV = function(v) {
-	console.log('CanvasGraph delV')
 	v = this.getV(v.x, v.y)
 	if (!v) return
 	if (v === this.drawer.lastDrawn) { 
