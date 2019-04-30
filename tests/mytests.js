@@ -1,4 +1,4 @@
-import { Testy, describe, test, expect } from './testy.js'
+import { testy, describe, test, expect } from 'http://192.81.214.140:8080/testy.js'
 describe('SimpleGraph Unit Test', function() { // TODO: run same set of tests on a different class with the same interface 
 	var Graph = SimpleGraph
 	var graph = new Graph()
@@ -59,7 +59,7 @@ describe('SimpleGraph Unit Test', function() { // TODO: run same set of tests on
 		expect( graph.edges.size === sizeE-1 , 'Expected graph to have 1 fewer edge' )
 	})
 })
-Testy.run()
+testy.run()
 /*
 Tests.getState = function() {
 	return { vertices: Canvas.graph.vertices.size, edges: Canvas.graph.edges.size }
