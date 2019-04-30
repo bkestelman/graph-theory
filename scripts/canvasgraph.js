@@ -10,8 +10,10 @@ var CanvasGraph = function(ctx, spec) {
 	this.drawer = {}
 }
 CanvasGraph.prototype = Object.create(SimpleGraph.prototype)
+CanvasGraph.defaultColor = 'white' // TODO: these should probably not be static
+CanvasGraph.vrad = 12
 CanvasGraph.prototype.createV = function(spec) { // should be a method of Vertex or static
-	var newv = new this.Vertex(spec.x, spec.y)
+	var newv = new this.Vertex({ x: spec.x, y: spec.y })
 	return newv
 }
 CanvasGraph.prototype.equalV = function(a, b) {
@@ -69,19 +71,17 @@ CanvasGraph.prototype.draw = function() {
 	}
 }
 CanvasGraph.prototype.drawHookV = function(v) {}
-CanvasGraph.defaultColor = 'white'
-CanvasGraph.vrad = 12
 CanvasGraph.VertexHook = function(v) {}
-CanvasGraph.prototype.Vertex = function(x, y) {
+CanvasGraph.prototype.Vertex = function(spec) { 
 	SimpleGraph.prototype.Vertex.call(this)
-	this.x = x
-	this.y = y
+	this.x = spec.x
+	this.y = spec.y
 	//this.color = CanvasGraph.defaultColor.slice(0)
 	this.path = new Path2D() 
-	this.path.arc(x, y, CanvasGraph.vrad, 0, 2 * Math.PI) // circle
+	this.path.arc(this.x, this.y, CanvasGraph.vrad, 0, 2 * Math.PI) // circle
 	CanvasGraph.VertexHook(this)
 }
-CanvasGraph.prototype.Vertex.prototype = Object.create(SimpleGraph.prototype.Vertex.prototype)
+CanvasGraph.prototype.Vertex.prototype = Object.create(SimpleGraph.prototype.Vertex.prototype) // this is ugly - reconsider inheritance structure
 CanvasGraph.prototype.Vertex.prototype.contains = function(x, y) {
 	return (this.x-x)*(this.x-x) + (this.y-y)*(this.y-y) <= CanvasGraph.vrad*CanvasGraph.vrad
 }
